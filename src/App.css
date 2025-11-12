@@ -1,35 +1,111 @@
-.App {
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #b0e0ff, #d0bfff);
+  color: #333;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 60px auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 30px 40px;
+}
+
+header {
   text-align: center;
-  font-family: Arial, sans-serif;
-  padding: 20px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.upload-section,
-.text-section {
-  margin: 20px auto;
-  width: 60%;
-  border: 1px solid #ddd;
+h2 {
+  color: #1f4b99;
+}
+
+.resume-box {
+  width: 100%;
+  border: 1.5px solid #ccc;
   border-radius: 10px;
-  padding: 20px;
-  background-color: #f8f8f8;
+  padding: 10px;
+  font-size: 15px;
+  resize: none;
+  transition: 0.3s;
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #0073e6;
+.resume-box:focus {
+  border-color: #1f4b99;
+  outline: none;
+  box-shadow: 0 0 5px rgba(31, 75, 153, 0.3);
+}
+
+.recommend-btn {
+  background: #1f4b99;
   color: white;
   border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.recommend-btn:hover {
+  background: #153a7b;
+}
+
+.results {
+  background: #f7f9ff;
+  border-left: 5px solid #1f4b99;
+  padding: 15px 20px;
+  margin-top: 25px;
+  border-radius: 8px;
+}
+
+.signout-btn {
+  float: right;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-button:hover {
-  background-color: #005bb5;
+.signout-btn:hover {
+  background: #c0392b;
 }
 
-textarea {
-  width: 80%;
-  border-radius: 6px;
-  padding: 10px;
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(120deg, #1f4b99, #7a2ff5);
+}
+
+.login-card {
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.signin-btn {
+  background: #1f4b99;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.signin-btn:hover {
+  background: #153a7b;
 }
