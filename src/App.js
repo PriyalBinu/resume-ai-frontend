@@ -14,7 +14,11 @@ function App() {
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
 
-  // Backend API (unchanged)
+  // Job alert subscription states
+  const [subEmail, setSubEmail] = useState("");
+  const [subSkills, setSubSkills] = useState([]);
+
+  // Backend API
   const API_BASE =
     "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
 
@@ -47,6 +51,34 @@ function App() {
   };
 
   /* =====================================================
+        📩 Subscribe to Job Alerts (SNS)
+  ====================================================== */
+  const subscribeToAlerts = async () => {
+    if (!subEmail) {
+      alert("Please enter your email!");
+      return;
+    }
+    if (subSkills.length === 0) {
+      alert("Please select at least one skill!");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: subEmail, skills: subSkills }),
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    } catch (err) {
+      console.error(err);
+      alert("Could not subscribe. Check backend.");
+    }
+  };
+
+  /* =====================================================
         🤖 ChatGPT Chatbot Function
   ====================================================== */
   const sendChatMessage = async () => {
@@ -55,7 +87,6 @@ function App() {
     const userMsg = chatInput;
     setChatInput("");
 
-    // add user message
     setChatMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
 
     try {
@@ -136,13 +167,41 @@ function App() {
                 {recommendations.recommended_jobs.join(", ")}
               </p>
 
-              {recommendations.grok_analysis && (
+              {recommendations.insights && (
                 <p>
-                  <b>AI Insights:</b> {recommendations.grok_analysis}
+                  <b>AI Insights:</b> {recommendations.insights}
                 </p>
               )}
             </div>
           )}
+        </div>
+
+        {/* --------- JOB ALERT SUBSCRIPTION SECTION --------- */}
+        <div className="alert-subscribe-box">
+          <h3>Get Job Alerts by Email</h3>
+
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={subEmail}
+            onChange={(e) => setSubEmail(e.target.value)}
+          />
+
+          <select
+            multiple
+            onChange={(e) =>
+              setSubSkills([...e.target.selectedOptions].map((o) => o.value))
+            }
+          >
+            <option value="data">Data Analyst</option>
+            <option value="ml">ML Engineer</option>
+            <option value="web">Web Developer</option>
+            <option value="cloud">Cloud Engineer</option>
+            <option value="cyber">Cybersecurity</option>
+            <option value="software">Software Developer</option>
+          </select>
+
+          <button onClick={subscribeToAlerts}>Subscribe</button>
         </div>
 
         {/* --------- CHATBOT SECTION --------- */}
