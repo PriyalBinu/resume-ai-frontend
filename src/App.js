@@ -3,9 +3,10 @@ import { useAuth } from "react-oidc-context";
 import "./App.css";
 
 /* -------------------------------
-   API ENDPOINTS
+   API BASE (NO EXTRA /recommend)
 -------------------------------- */
-const API_BASE = "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
+const API_BASE =
+  "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
 
 function App() {
   const auth = useAuth();
@@ -20,8 +21,8 @@ function App() {
   const [chatMessages, setChatMessages] = useState([]);
 
   /* =====================================================
-     📌 FUNCTION: Get Job Recommendations
-  ===================================================== */
+      📌 FUNCTION: Get Job Recommendations
+     ===================================================== */
   const handleRecommend = async () => {
     if (!resumeText.trim()) return alert("Please paste resume text!");
 
@@ -33,6 +34,8 @@ function App() {
         body: JSON.stringify({ resume_text: resumeText }),
       });
 
+      if (!response.ok) throw new Error(`Server Error ${response.status}`);
+
       const data = await response.json();
       setRecommendations(data);
     } catch (error) {
@@ -43,15 +46,14 @@ function App() {
   };
 
   /* =====================================================
-     📌 FUNCTION: Chatbot message send
-  ===================================================== */
+      📌 FUNCTION: Chatbot message send
+     ===================================================== */
   const sendChatMessage = async () => {
     if (!chatInput.trim()) return;
 
     const userMsg = chatInput;
     setChatInput("");
 
-    // Add user message
     setChatMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
 
     try {
@@ -61,11 +63,13 @@ function App() {
         body: JSON.stringify({ message: userMsg }),
       });
 
+      if (!response.ok) throw new Error("Chatbot server error");
+
       const data = await response.json();
 
       setChatMessages((prev) => [
         ...prev,
-        { sender: "bot", text: data.reply || "No response from AI." },
+        { sender: "bot", text: data.reply || "No response." },
       ]);
     } catch (e) {
       setChatMessages((prev) => [
@@ -76,30 +80,31 @@ function App() {
   };
 
   /* =====================================================
-     🔐 Authentication Handling
-  ===================================================== */
+      🔐 Authentication Handling
+     ===================================================== */
   if (auth.isLoading) return <div className="loading">Loading...</div>;
   if (auth.error) return <div className="error">Error: {auth.error.message}</div>;
 
   /* =====================================================
-     🔐 IF USER IS LOGGED IN
-  ===================================================== */
+      🔐 IF USER IS LOGGED IN
+     ===================================================== */
   if (auth.isAuthenticated) {
     return (
       <div className="app-container">
         <header className="top-bar">
           <h2>AI Resume Job Recommender</h2>
-          <p>Welcome, <b>{auth.user?.profile.email}</b></p>
+          <p>
+            Welcome, <b>{auth.user?.profile.email}</b>
+          </p>
           <button className="signout-btn" onClick={() => auth.removeUser()}>
             Sign out
           </button>
         </header>
 
-        {/* -----------------------------------------
-             RESUME INPUT + RECOMMENDATION SECTION
-        ------------------------------------------ */}
+        {/* --------- RESUME RECOMMENDATION --------- */}
         <div className="content-box">
           <h3>Paste your Resume Text</h3>
+
           <textarea
             className="resume-box"
             rows="8"
@@ -119,16 +124,20 @@ function App() {
           {recommendations && (
             <div className="results">
               <h4>{recommendations.summary}</h4>
-              <p><b>Jobs:</b> {recommendations.recommended_jobs.join(", ")}</p>
-              <p><b>Confidence:</b> {recommendations.confidence}</p>
-              <p><b>Insights:</b> {recommendations.insights}</p>
+              <p>
+                <b>Jobs:</b> {recommendations.recommended_jobs.join(", ")}
+              </p>
+              <p>
+                <b>Confidence:</b> {recommendations.confidence}
+              </p>
+              <p>
+                <b>Insights:</b> {recommendations.insights}
+              </p>
             </div>
           )}
         </div>
 
-        {/* -----------------------------------------
-             CHATBOT SECTION
-        ------------------------------------------ */}
+        {/* --------- CHATBOT SECTION --------- */}
         <div className="chatbot-box">
           <h3>Chat with AI Career Assistant</h3>
 
@@ -148,7 +157,7 @@ function App() {
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Ask something about careers, jobs..."
+              placeholder="Ask about careers..."
             />
             <button onClick={sendChatMessage}>Send</button>
           </div>
@@ -158,8 +167,8 @@ function App() {
   }
 
   /* =====================================================
-     🔓 IF NOT AUTHENTICATED — LOGIN SCREEN
-  ===================================================== */
+      🔓 IF NOT LOGGED IN — LOGIN SCREEN
+     ===================================================== */
   return (
     <div className="login-page">
       <div className="login-card">
