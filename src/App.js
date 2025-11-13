@@ -19,8 +19,8 @@ function App() {
   const [subSkills, setSubSkills] = useState([]);
 
   // Backend API
-  const API_BASE =
-    "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender/api";
+  const API_BASE = "https://tdf4ro427fv6iba7hmotncz62u0xfpnb.lambda-url.eu-north-1.on.aws";
+
 
   /* =====================================================
         📌 Get Job Recommendation
