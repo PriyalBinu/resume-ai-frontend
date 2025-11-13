@@ -3,7 +3,7 @@ import { useAuth } from "react-oidc-context";
 import "./App.css";
 
 /* -------------------------------
-   API BASE (NO EXTRA /recommend)
+   API BASE (NO NEWLINE BUG)
 -------------------------------- */
 const API_BASE =
   "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
@@ -11,7 +11,7 @@ const API_BASE =
 function App() {
   const auth = useAuth();
 
-  // Resume recommendation states
+  // Resume states
   const [resumeText, setResumeText] = useState("");
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -21,8 +21,8 @@ function App() {
   const [chatMessages, setChatMessages] = useState([]);
 
   /* =====================================================
-      📌 FUNCTION: Get Job Recommendations
-     ===================================================== */
+       📌 FUNCTION: Get Job Recommendations
+  ====================================================== */
   const handleRecommend = async () => {
     if (!resumeText.trim()) return alert("Please paste resume text!");
 
@@ -34,20 +34,18 @@ function App() {
         body: JSON.stringify({ resume_text: resumeText }),
       });
 
-      if (!response.ok) throw new Error(`Server Error ${response.status}`);
-
       const data = await response.json();
       setRecommendations(data);
     } catch (error) {
-      console.error("Error:", error);
+      console.error(error);
       alert("Failed to get job recommendations.");
     }
     setLoading(false);
   };
 
   /* =====================================================
-      📌 FUNCTION: Chatbot message send
-     ===================================================== */
+       📌 FUNCTION: chatbot message send
+  ====================================================== */
   const sendChatMessage = async () => {
     if (!chatInput.trim()) return;
 
@@ -62,8 +60,6 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userMsg }),
       });
-
-      if (!response.ok) throw new Error("Chatbot server error");
 
       const data = await response.json();
 
@@ -80,14 +76,14 @@ function App() {
   };
 
   /* =====================================================
-      🔐 Authentication Handling
-     ===================================================== */
-  if (auth.isLoading) return <div className="loading">Loading...</div>;
-  if (auth.error) return <div className="error">Error: {auth.error.message}</div>;
+       AUTH CONTROL
+  ====================================================== */
+  if (auth.isLoading) return <div>Loading...</div>;
+  if (auth.error) return <div>Error: {auth.error.message}</div>;
 
   /* =====================================================
-      🔐 IF USER IS LOGGED IN
-     ===================================================== */
+       LOGGED IN VIEW
+  ====================================================== */
   if (auth.isAuthenticated) {
     return (
       <div className="app-container">
@@ -96,12 +92,13 @@ function App() {
           <p>
             Welcome, <b>{auth.user?.profile.email}</b>
           </p>
+
           <button className="signout-btn" onClick={() => auth.removeUser()}>
             Sign out
           </button>
         </header>
 
-        {/* --------- RESUME RECOMMENDATION --------- */}
+        {/* Resume box */}
         <div className="content-box">
           <h3>Paste your Resume Text</h3>
 
@@ -123,21 +120,17 @@ function App() {
 
           {recommendations && (
             <div className="results">
-              <h4>{recommendations.summary}</h4>
+              <h4>{recommendations.grok_analysis}</h4>
+
               <p>
-                <b>Jobs:</b> {recommendations.recommended_jobs.join(", ")}
-              </p>
-              <p>
-                <b>Confidence:</b> {recommendations.confidence}
-              </p>
-              <p>
-                <b>Insights:</b> {recommendations.insights}
+                <b>Jobs:</b>{" "}
+                {recommendations.recommended_jobs.join(", ")}
               </p>
             </div>
           )}
         </div>
 
-        {/* --------- CHATBOT SECTION --------- */}
+        {/* Chatbot */}
         <div className="chatbot-box">
           <h3>Chat with AI Career Assistant</h3>
 
@@ -154,10 +147,9 @@ function App() {
 
           <div className="chat-input-row">
             <input
-              type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Ask about careers..."
+              placeholder="Ask something..."
             />
             <button onClick={sendChatMessage}>Send</button>
           </div>
@@ -167,13 +159,12 @@ function App() {
   }
 
   /* =====================================================
-      🔓 IF NOT LOGGED IN — LOGIN SCREEN
-     ===================================================== */
+       LOGIN VIEW
+  ====================================================== */
   return (
     <div className="login-page">
       <div className="login-card">
         <h2>AI Resume Job Recommender</h2>
-        <p>Sign in to get personalized job recommendations</p>
         <button className="signin-btn" onClick={() => auth.signinRedirect()}>
           Sign in with Cognito
         </button>
