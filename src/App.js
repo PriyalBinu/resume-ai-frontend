@@ -20,7 +20,7 @@ function App() {
 
   // Backend API
   const API_BASE =
-    "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
+    "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender/api";
 
   /* =====================================================
         📌 Get Job Recommendation
