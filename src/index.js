@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import { AuthProvider } from "react-oidc-context";
 import { Amplify } from "aws-amplify";
 import awsconfig from "./aws-exports";
+import { AuthProvider } from "react-oidc-context";
+import App from "./App";
 
-// Configure Amplify **after** imports
+// Configure Amplify
 Amplify.configure(awsconfig);
 
 const cognitoAuthConfig = {
@@ -16,8 +16,11 @@ const cognitoAuthConfig = {
   scope: "email openid phone",
 };
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+// Debug check
+console.log("✅ React app loaded");
 
+// Render
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <AuthProvider {...cognitoAuthConfig}>
