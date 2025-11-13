@@ -1,12 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Amplify } from "aws-amplify";
-import awsconfig from "./aws-exports";
-import { AuthProvider } from "react-oidc-context";
 import App from "./App";
+import { AuthProvider } from "react-oidc-context";
+import { Amplify } from "aws-amplify";
+import awsExports from "./aws-exports";
 
-// Configure Amplify
-Amplify.configure(awsconfig);
+Amplify.configure(awsExports); // ✅ Configure Amplify first
 
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.eu-north-1.amazonaws.com/eu-north-1_9CwAB85xS",
@@ -16,10 +15,6 @@ const cognitoAuthConfig = {
   scope: "email openid phone",
 };
 
-// Debug check
-console.log("✅ React app loaded");
-
-// Render
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

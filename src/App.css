@@ -1,117 +1,90 @@
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+  background: linear-gradient(135deg, #f0f4f8, #d9e8fc);
   margin: 0;
   padding: 0;
 }
 
 .app-container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
+  max-width: 800px;
+  margin: 50px auto;
   background: white;
-  border-radius: 15px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 30px;
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
+  border-bottom: 2px solid #ececec;
+  padding-bottom: 15px;
   margin-bottom: 20px;
 }
 
-.signout-btn {
-  background: #ff4d4f;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
+h2 {
+  color: #2d4cc8;
+  margin-bottom: 5px;
 }
 
 .resume-box {
   width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 8px;
   padding: 10px;
-  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
   outline: none;
+  resize: vertical;
 }
 
 .recommend-btn {
-  background: #2d6cdf;
+  background-color: #2d4cc8;
   color: white;
   border: none;
+  border-radius: 8px;
   padding: 10px 20px;
-  border-radius: 10px;
   margin-top: 10px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.recommend-btn:hover {
+  background-color: #1b33a4;
 }
 
 .results {
   margin-top: 20px;
+  background: #f8faff;
   padding: 15px;
-  background: #f8f9fa;
-  border-left: 5px solid #2d6cdf;
-  border-radius: 10px;
-}
-
-/* Chatbot Section */
-.chatbot {
-  margin-top: 30px;
-  padding: 15px;
-  background: #f9faff;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.chat-box {
-  max-height: 250px;
-  overflow-y: auto;
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.user-msg {
-  text-align: right;
-  background: #2d6cdf;
-  color: white;
-  padding: 8px 12px;
-  margin: 5px;
-  border-radius: 12px 12px 0 12px;
-  display: inline-block;
-}
-
-.bot-msg {
-  text-align: left;
-  background: #e4e6eb;
-  color: #333;
-  padding: 8px 12px;
-  margin: 5px;
-  border-radius: 12px 12px 12px 0;
-  display: inline-block;
-}
-
-.chat-input {
+.login-page {
+  height: 100vh;
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
 }
 
-.chat-input input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+.login-card {
+  text-align: center;
+  background: white;
+  padding: 40px 60px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
 }
 
-.chat-input button {
-  background: #2d6cdf;
+.signin-btn {
+  background-color: #2d4cc8;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 8px;
+  padding: 12px 25px;
   cursor: pointer;
+  font-size: 16px;
+}
+
+.signin-btn:hover {
+  background-color: #1b33a4;
 }
