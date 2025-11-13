@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "react-oidc-context";
 import "./App.css";
-import LexChatbot from "./LexChatbot";
 
 function App() {
   const auth = useAuth();
@@ -9,18 +8,23 @@ function App() {
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Backend API Gateway endpoint
-  const API_URL = "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender/recommend";
+  // ✅ Correct API gateway base URL (NO /recommend at the end)
+  const API_BASE =
+    "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
 
+  /* =====================================================
+      📌 Get Job Recommendation
+  ====================================================== */
   const handleRecommend = async () => {
     if (!resumeText.trim()) {
-      alert("Please paste your resume text first!");
+      alert("Please paste your resume first!");
       return;
     }
 
     setLoading(true);
+
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_BASE}/recommend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_text: resumeText }),
@@ -29,38 +33,40 @@ function App() {
       const data = await response.json();
       setRecommendations(data);
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to get recommendation. Please check backend connection.");
+      console.error(error);
+      alert("Backend error: Could not get recommendations.");
     }
+
     setLoading(false);
   };
 
-  // ✅ Logout through Cognito
-  const signOutRedirect = () => {
-    const clientId = "58hc6tvb57fio4hlmdeht6qnu5";
-    const logoutUri = "https://main.dt99oihfbmpcm.amplifyapp.com/";
-    const cognitoDomain = "https://eu-north-19cwab85xs.auth.eu-north-1.amazoncognito.com";
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      logoutUri
-    )}`;
-  };
-
+  /* =====================================================
+      🔐 Authentication Handling
+  ====================================================== */
   if (auth.isLoading) return <div className="loading">Loading...</div>;
   if (auth.error) return <div className="error">Error: {auth.error.message}</div>;
 
+  /* =====================================================
+      🔐 If user is logged in
+  ====================================================== */
   if (auth.isAuthenticated) {
     return (
       <div className="app-container">
         <header>
           <h2>AI Resume Job Recommender</h2>
-          <p>Welcome, <b>{auth.user?.profile.email}</b></p>
+          <p>
+            Welcome, <b>{auth.user?.profile.email}</b>
+          </p>
+
           <button className="signout-btn" onClick={() => auth.removeUser()}>
             Sign out
           </button>
         </header>
 
+        {/* --------- RESUME INPUT --------- */}
         <div className="content">
           <h3>Paste your resume text below:</h3>
+
           <textarea
             className="resume-box"
             rows="10"
@@ -68,138 +74,49 @@ function App() {
             value={resumeText}
             onChange={(e) => setResumeText(e.target.value)}
           ></textarea>
-          <br />
-          <button className="recommend-btn" onClick={handleRecommend} disabled={loading}>
+
+          <button
+            className="recommend-btn"
+            onClick={handleRecommend}
+            disabled={loading}
+          >
             {loading ? "Analyzing..." : "Get AI Recommendations"}
           </button>
 
           {recommendations && (
             <div className="results">
-              <h4>{recommendations.summary}</h4>
-              <p><b>Recommended Jobs:</b> {recommendations.recommended_jobs.join(", ")}</p>
-              <p><b>Confidence:</b> {recommendations.confidence}</p>
-              <p><b>Insights:</b> {recommendations.insights}</p>
+              <h4>AI Recommendation Summary</h4>
+
+              <p>
+                <b>Recommended Jobs:</b>{" "}
+                {recommendations.recommended_jobs.join(", ")}
+              </p>
+
+              {recommendations.grok_analysis && (
+                <p>
+                  <b>AI Insights:</b> {recommendations.grok_analysis}
+                </p>
+              )}
             </div>
           )}
         </div>
-
-        {/* ✅ Add LexChatbot as floating chat bubble */}
-        <LexChatbot />
       </div>
     );
   }
 
+  /* =====================================================
+      🔓 If NOT logged in
+  ====================================================== */
   return (
     <div className="login-page">
       <div className="login-card">
         <h2>AI Resume Job Recommender</h2>
-        <p>Sign in securely to get job recommendations powered by AI</p>
-        <button className="signin-btn" onClick={() => auth.signinRedirect()}>
-          Sign in with Cognito
-        </button>
-      </div>
-    </div>
-  );
-}
+        <p>Sign in to get personalized job recommendations</p>
 
-export default App;
-import React, { useState } from "react";
-import { useAuth } from "react-oidc-context";
-import "./App.css";
-import LexChatbot from "./LexChatbot";
-
-function App() {
-  const auth = useAuth();
-  const [resumeText, setResumeText] = useState("");
-  const [recommendations, setRecommendations] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // ✅ Backend API Gateway endpoint
-  const API_URL = "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender/recommend";
-
-  const handleRecommend = async () => {
-    if (!resumeText.trim()) {
-      alert("Please paste your resume text first!");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume_text: resumeText }),
-      });
-
-      const data = await response.json();
-      setRecommendations(data);
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to get recommendation. Please check backend connection.");
-    }
-    setLoading(false);
-  };
-
-  // ✅ Logout through Cognito
-  const signOutRedirect = () => {
-    const clientId = "58hc6tvb57fio4hlmdeht6qnu5";
-    const logoutUri = "https://main.dt99oihfbmpcm.amplifyapp.com/";
-    const cognitoDomain = "https://eu-north-19cwab85xs.auth.eu-north-1.amazoncognito.com";
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      logoutUri
-    )}`;
-  };
-
-  if (auth.isLoading) return <div className="loading">Loading...</div>;
-  if (auth.error) return <div className="error">Error: {auth.error.message}</div>;
-
-  if (auth.isAuthenticated) {
-    return (
-      <div className="app-container">
-        <header>
-          <h2>AI Resume Job Recommender</h2>
-          <p>Welcome, <b>{auth.user?.profile.email}</b></p>
-          <button className="signout-btn" onClick={() => auth.removeUser()}>
-            Sign out
-          </button>
-        </header>
-
-        <div className="content">
-          <h3>Paste your resume text below:</h3>
-          <textarea
-            className="resume-box"
-            rows="10"
-            placeholder="Paste your resume text here..."
-            value={resumeText}
-            onChange={(e) => setResumeText(e.target.value)}
-          ></textarea>
-          <br />
-          <button className="recommend-btn" onClick={handleRecommend} disabled={loading}>
-            {loading ? "Analyzing..." : "Get AI Recommendations"}
-          </button>
-
-          {recommendations && (
-            <div className="results">
-              <h4>{recommendations.summary}</h4>
-              <p><b>Recommended Jobs:</b> {recommendations.recommended_jobs.join(", ")}</p>
-              <p><b>Confidence:</b> {recommendations.confidence}</p>
-              <p><b>Insights:</b> {recommendations.insights}</p>
-            </div>
-          )}
-        </div>
-
-        {/* ✅ Add LexChatbot as floating chat bubble */}
-        <LexChatbot />
-      </div>
-    );
-  }
-
-  return (
-    <div className="login-page">
-      <div className="login-card">
-        <h2>AI Resume Job Recommender</h2>
-        <p>Sign in securely to get job recommendations powered by AI</p>
-        <button className="signin-btn" onClick={() => auth.signinRedirect()}>
+        <button
+          className="signin-btn"
+          onClick={() => auth.signinRedirect()}
+        >
           Sign in with Cognito
         </button>
       </div>
