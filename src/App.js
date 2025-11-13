@@ -19,7 +19,8 @@ function App() {
   const [subSkills, setSubSkills] = useState([]);
 
   // Backend API
-  const API_BASE = "https://tdf4ro427fv6iba7hmotncz62u0xfpnb.lambda-url.eu-north-1.on.aws";
+  const API_BASE = "https://q2e6axkzjmuxuhr2vzkdrnm25y0ppmwi.lambda-url.eu-north-1.on.aws";
+
 
 
   /* =====================================================
