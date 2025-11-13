@@ -1,111 +1,117 @@
 body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #b0e0ff, #d0bfff);
-  color: #333;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
   margin: 0;
-  min-height: 100vh;
+  padding: 0;
 }
 
 .app-container {
-  max-width: 800px;
-  margin: 60px auto;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
 }
 
 header {
-  text-align: center;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 20px;
-  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-h2 {
-  color: #1f4b99;
+.signout-btn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .resume-box {
   width: 100%;
-  border: 1.5px solid #ccc;
-  border-radius: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   padding: 10px;
   font-size: 15px;
-  resize: none;
-  transition: 0.3s;
-}
-
-.resume-box:focus {
-  border-color: #1f4b99;
   outline: none;
-  box-shadow: 0 0 5px rgba(31, 75, 153, 0.3);
 }
 
 .recommend-btn {
-  background: #1f4b99;
+  background: #2d6cdf;
   color: white;
   border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 10px;
   margin-top: 10px;
-  transition: 0.3s;
-}
-
-.recommend-btn:hover {
-  background: #153a7b;
+  cursor: pointer;
 }
 
 .results {
-  background: #f7f9ff;
-  border-left: 5px solid #1f4b99;
-  padding: 15px 20px;
-  margin-top: 25px;
-  border-radius: 8px;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-left: 5px solid #2d6cdf;
+  border-radius: 10px;
 }
 
-.signout-btn {
-  float: right;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.signout-btn:hover {
-  background: #c0392b;
-}
-
-.login-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: linear-gradient(120deg, #1f4b99, #7a2ff5);
-}
-
-.login-card {
-  text-align: center;
-  background: white;
+/* Chatbot Section */
+.chatbot {
+  margin-top: 30px;
+  padding: 15px;
+  background: #f9faff;
   border-radius: 12px;
-  padding: 40px 50px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.signin-btn {
-  background: #1f4b99;
+.chat-box {
+  max-height: 250px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.user-msg {
+  text-align: right;
+  background: #2d6cdf;
   color: white;
-  padding: 12px 30px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
+  padding: 8px 12px;
+  margin: 5px;
+  border-radius: 12px 12px 0 12px;
+  display: inline-block;
 }
 
-.signin-btn:hover {
-  background: #153a7b;
+.bot-msg {
+  text-align: left;
+  background: #e4e6eb;
+  color: #333;
+  padding: 8px 12px;
+  margin: 5px;
+  border-radius: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.chat-input {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.chat-input button {
+  background: #2d6cdf;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
 }
