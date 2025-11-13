@@ -4,16 +4,22 @@ import "./App.css";
 
 function App() {
   const auth = useAuth();
+
+  // Resume recommender states
   const [resumeText, setResumeText] = useState("");
   const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Correct API gateway base URL (NO /recommend at the end)
+  // Chatbot states
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState([]);
+
+  // Backend API (unchanged)
   const API_BASE =
     "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
 
   /* =====================================================
-      📌 Get Job Recommendation
+        📌 Get Job Recommendation
   ====================================================== */
   const handleRecommend = async () => {
     if (!resumeText.trim()) {
@@ -41,13 +47,51 @@ function App() {
   };
 
   /* =====================================================
-      🔐 Authentication Handling
+        🤖 ChatGPT Chatbot Function
+  ====================================================== */
+  const sendChatMessage = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMsg = chatInput;
+    setChatInput("");
+
+    // add user message
+    setChatMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_OPENAI_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: userMsg }],
+        }),
+      });
+
+      const data = await response.json();
+      const botReply = data?.choices?.[0]?.message?.content || "No response.";
+
+      setChatMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
+    } catch (err) {
+      console.error(err);
+      setChatMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "ChatGPT API error." },
+      ]);
+    }
+  };
+
+  /* =====================================================
+        🔐 Authentication Handling
   ====================================================== */
   if (auth.isLoading) return <div className="loading">Loading...</div>;
   if (auth.error) return <div className="error">Error: {auth.error.message}</div>;
 
   /* =====================================================
-      🔐 If user is logged in
+        🔐 If user is logged in
   ====================================================== */
   if (auth.isAuthenticated) {
     return (
@@ -63,7 +107,7 @@ function App() {
           </button>
         </header>
 
-        {/* --------- RESUME INPUT --------- */}
+        {/* --------- RESUME INPUT SECTION --------- */}
         <div className="content">
           <h3>Paste your resume text below:</h3>
 
@@ -100,12 +144,38 @@ function App() {
             </div>
           )}
         </div>
+
+        {/* --------- CHATBOT SECTION --------- */}
+        <div className="chatbot-box">
+          <h3>Chat with AI Career Assistant</h3>
+
+          <div className="chat-window">
+            {chatMessages.map((msg, index) => (
+              <div
+                key={index}
+                className={msg.sender === "user" ? "user-msg" : "bot-msg"}
+              >
+                {msg.text}
+              </div>
+            ))}
+          </div>
+
+          <div className="chat-input-row">
+            <input
+              type="text"
+              value={chatInput}
+              placeholder="Ask something about careers..."
+              onChange={(e) => setChatInput(e.target.value)}
+            />
+            <button onClick={sendChatMessage}>Send</button>
+          </div>
+        </div>
       </div>
     );
   }
 
   /* =====================================================
-      🔓 If NOT logged in
+        🔓 If NOT logged in
   ====================================================== */
   return (
     <div className="login-page">
@@ -113,10 +183,7 @@ function App() {
         <h2>AI Resume Job Recommender</h2>
         <p>Sign in to get personalized job recommendations</p>
 
-        <button
-          className="signin-btn"
-          onClick={() => auth.signinRedirect()}
-        >
+        <button className="signin-btn" onClick={() => auth.signinRedirect()}>
           Sign in with Cognito
         </button>
       </div>
