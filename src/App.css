@@ -1,90 +1,198 @@
+/* -------------------------------------------------------
+   GENERAL PAGE STYLING
+-------------------------------------------------------- */
 body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f0f4f8, #d9e8fc);
   margin: 0;
   padding: 0;
+  background: #f4f7fb;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
 }
 
 .app-container {
-  max-width: 800px;
-  margin: 50px auto;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* -------------------------------------------------------
+   TOP HEADER BAR
+-------------------------------------------------------- */
+.top-bar {
+  background: #1a73e8;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.signout-btn {
+  background-color: #ff4b4b;
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.signout-btn:hover {
+  background-color: #e03c3c;
+}
+
+/* -------------------------------------------------------
+   CONTENT BOX (Resume + Recommendations)
+-------------------------------------------------------- */
+.content-box {
   background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  padding: 30px;
-}
-
-header {
-  text-align: center;
-  border-bottom: 2px solid #ececec;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
-}
-
-h2 {
-  color: #2d4cc8;
-  margin-bottom: 5px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
 }
 
 .resume-box {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #bbb;
   font-size: 16px;
-  outline: none;
   resize: vertical;
 }
 
 .recommend-btn {
-  background-color: #2d4cc8;
+  margin-top: 15px;
+  background: #1a73e8;
   color: white;
   border: none;
+  padding: 12px 18px;
   border-radius: 8px;
-  padding: 10px 20px;
-  margin-top: 10px;
-  cursor: pointer;
   font-size: 16px;
-  transition: background 0.3s;
+  cursor: pointer;
 }
 
 .recommend-btn:hover {
-  background-color: #1b33a4;
+  background: #145cb8;
 }
 
 .results {
   margin-top: 20px;
-  background: #f8faff;
   padding: 15px;
-  border-radius: 12px;
+  background: #eef3ff;
+  border-left: 5px solid #1a73e8;
+  border-radius: 8px;
 }
 
+/* -------------------------------------------------------
+   LOGIN PAGE STYLING (Cognito screen)
+-------------------------------------------------------- */
 .login-page {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
+  background: #d9e6ff;
 }
 
 .login-card {
-  text-align: center;
   background: white;
-  padding: 40px 60px;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  padding: 30px;
+  width: 350px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .signin-btn {
-  background-color: #2d4cc8;
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: #1a73e8;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px 25px;
-  cursor: pointer;
   font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .signin-btn:hover {
-  background-color: #1b33a4;
+  background: #145cb8;
+}
+
+/* -------------------------------------------------------
+   CHATBOT SECTION
+-------------------------------------------------------- */
+.chatbot-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+.chat-window {
+  height: 250px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #f7faff;
+  border-radius: 8px;
+  border: 1px solid #d0d7e6;
+  margin-bottom: 15px;
+}
+
+.user-msg {
+  background: #1a73e8;
+  color: white;
+  padding: 10px;
+  max-width: 75%;
+  margin-bottom: 10px;
+  border-radius: 12px 12px 0 12px;
+  margin-left: auto;
+}
+
+.bot-msg {
+  background: #e2eaff;
+  padding: 10px;
+  max-width: 75%;
+  margin-bottom: 10px;
+  border-radius: 12px 12px 12px 0;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+}
+
+.chat-input-row button {
+  padding: 12px 20px;
+  border: none;
+  background: #1a73e8;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.chat-input-row button:hover {
+  background: #145cb8;
+}
+
+/* -------------------------------------------------------
+   STATUS/LOADING STYLES
+-------------------------------------------------------- */
+.loading,
+.error {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 20px;
+  color: #444;
 }
