@@ -18,14 +18,18 @@ function App() {
   const [subEmail, setSubEmail] = useState("");
   const [subSkills, setSubSkills] = useState([]);
 
-  // Backend API
-  const API_BASE = "https://q2e6axkzjmuxuhr2vzkdrnm25y0ppmwi.lambda-url.eu-north-1.on.aws";
+  // ---------- Backend endpoints (Edit if needed) ----------
+  // Recommendation backend (keep the value your project expects)
+  const API_BASE =
+    "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
 
+  // SNS REST API (REST endpoint you created & deployed)
+  const SNS_API =
+    "https://x0sdhjjxk8.execute-api.eu-north-1.amazonaws.com/prod";
 
-
-  /* =====================================================
-        📌 Get Job Recommendation
-  ====================================================== */
+  // =======================================================
+  // Get Job Recommendation
+  // =======================================================
   const handleRecommend = async () => {
     if (!resumeText.trim()) {
       alert("Please paste your resume first!");
@@ -33,7 +37,6 @@ function App() {
     }
 
     setLoading(true);
-
     try {
       const response = await fetch(`${API_BASE}/recommend`, {
         method: "POST",
@@ -41,53 +44,63 @@ function App() {
         body: JSON.stringify({ resume_text: resumeText }),
       });
 
+      if (!response.ok) {
+        const txt = await response.text().catch(() => "");
+        throw new Error(`Recommendation API error: ${response.status} ${txt}`);
+      }
+
       const data = await response.json();
       setRecommendations(data);
     } catch (error) {
-      console.error(error);
+      console.error("Recommend error:", error);
       alert("Backend error: Could not get recommendations.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  /* =====================================================
-        📩 Subscribe to Job Alerts (SNS)
-  ====================================================== */
+  // =======================================================
+  // Subscribe to Job Alerts (SNS)
+  // =======================================================
   const subscribeToAlerts = async () => {
     if (!subEmail) {
       alert("Please enter your email!");
       return;
     }
-    if (subSkills.length === 0) {
+    if (!subSkills || subSkills.length === 0) {
       alert("Please select at least one skill!");
       return;
     }
 
     try {
-      const res = await fetch(`${API_BASE}/subscribe`, {
+      const res = await fetch(`${SNS_API}/subscribe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: subEmail, skills: subSkills }),
       });
 
+      // handle non-OK
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(`Subscribe API error ${res.status}: ${txt}`);
+      }
+
       const data = await res.json();
-      alert(data.message);
+      alert(data.message || "Confirmation email sent! Please check your inbox.");
     } catch (err) {
-      console.error(err);
+      console.error("Subscribe error:", err);
       alert("Could not subscribe. Check backend.");
     }
   };
 
-  /* =====================================================
-        🤖 ChatGPT Chatbot Function
-  ====================================================== */
+  // =======================================================
+  // ChatGPT Chatbot Function
+  // =======================================================
   const sendChatMessage = async () => {
     if (!chatInput.trim()) return;
 
     const userMsg = chatInput;
     setChatInput("");
-
     setChatMessages((prev) => [...prev, { sender: "user", text: userMsg }]);
 
     try {
@@ -103,43 +116,43 @@ function App() {
         }),
       });
 
+      if (!response.ok) {
+        const t = await response.text().catch(() => "");
+        throw new Error(`OpenAI error ${response.status}: ${t}`);
+      }
+
       const data = await response.json();
       const botReply = data?.choices?.[0]?.message?.content || "No response.";
-
       setChatMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
     } catch (err) {
-      console.error(err);
-      setChatMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "ChatGPT API error." },
-      ]);
+      console.error("Chat error:", err);
+      setChatMessages((prev) => [...prev, { sender: "bot", text: "ChatGPT API error." }]);
     }
   };
 
-  /* =====================================================
-        🔐 Authentication Handling
-  ====================================================== */
+  // =======================================================
+  // Authentication UI handling
+  // =======================================================
   if (auth.isLoading) return <div className="loading">Loading...</div>;
   if (auth.error) return <div className="error">Error: {auth.error.message}</div>;
 
-  /* =====================================================
-        🔐 If user is logged in
-  ====================================================== */
+  // =======================================================
+  // Authenticated UI
+  // =======================================================
   if (auth.isAuthenticated) {
     return (
       <div className="app-container">
         <header>
           <h2>AI Resume Job Recommender</h2>
           <p>
-            Welcome, <b>{auth.user?.profile.email}</b>
+            Welcome, <b>{auth.user?.profile?.email}</b>
           </p>
-
           <button className="signout-btn" onClick={() => auth.removeUser()}>
             Sign out
           </button>
         </header>
 
-        {/* --------- RESUME INPUT SECTION --------- */}
+        {/* Resume input + recommendation */}
         <div className="content">
           <h3>Paste your resume text below:</h3>
 
@@ -151,23 +164,17 @@ function App() {
             onChange={(e) => setResumeText(e.target.value)}
           ></textarea>
 
-          <button
-            className="recommend-btn"
-            onClick={handleRecommend}
-            disabled={loading}
-          >
+          <button className="recommend-btn" onClick={handleRecommend} disabled={loading}>
             {loading ? "Analyzing..." : "Get AI Recommendations"}
           </button>
 
           {recommendations && (
             <div className="results">
               <h4>AI Recommendation Summary</h4>
-
               <p>
                 <b>Recommended Jobs:</b>{" "}
-                {recommendations.recommended_jobs.join(", ")}
+                {(recommendations.recommended_jobs || []).join(", ")}
               </p>
-
               {recommendations.insights && (
                 <p>
                   <b>AI Insights:</b> {recommendations.insights}
@@ -177,7 +184,7 @@ function App() {
           )}
         </div>
 
-        {/* --------- JOB ALERT SUBSCRIPTION SECTION --------- */}
+        {/* SNS subscription */}
         <div className="alert-subscribe-box">
           <h3>Get Job Alerts by Email</h3>
 
@@ -190,6 +197,7 @@ function App() {
 
           <select
             multiple
+            value={subSkills}
             onChange={(e) =>
               setSubSkills([...e.target.selectedOptions].map((o) => o.value))
             }
@@ -205,7 +213,7 @@ function App() {
           <button onClick={subscribeToAlerts}>Subscribe</button>
         </div>
 
-        {/* --------- CHATBOT SECTION --------- */}
+        {/* Chatbot */}
         <div className="chatbot-box">
           <h3>Chat with AI Career Assistant</h3>
 
@@ -234,9 +242,9 @@ function App() {
     );
   }
 
-  /* =====================================================
-        🔓 If NOT logged in
-  ====================================================== */
+  // =======================================================
+  // Not-authenticated UI
+  // =======================================================
   return (
     <div className="login-page">
       <div className="login-card">
