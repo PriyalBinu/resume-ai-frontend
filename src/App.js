@@ -20,12 +20,9 @@ function App() {
 
   // ---------- Backend endpoints (Edit if needed) ----------
   // Recommendation backend (keep the value your project expects)
-  const API_BASE =
-    "https://f0zssx0ly4.execute-api.eu-north-1.amazonaws.com/ai-job-recommender";
+ const API_BASE = "https://tdf4ro427fv6iba7hmotncz62u0xfpnb.lambda-url.eu-north-1.on.aws";
+ const SNS_API = "https://tdf4ro427fv6iba7hmotncz62u0xfpnb.lambda-url.eu-north-1.on.aws";
 
-  // SNS REST API (REST endpoint you created & deployed)
-  const SNS_API =
-    "https://x0sdhjjxk8.execute-api.eu-north-1.amazonaws.com/prod";
 
   // =======================================================
   // Get Job Recommendation
@@ -38,7 +35,8 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/recommend`, {
+      const response = await fetch(`${API_BASE}/api/recommend`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_text: resumeText }),
@@ -73,7 +71,8 @@ function App() {
     }
 
     try {
-      const res = await fetch(`${SNS_API}/subscribe`, {
+      const res = await fetch(`${SNS_API}/api/subscribe`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: subEmail, skills: subSkills }),
